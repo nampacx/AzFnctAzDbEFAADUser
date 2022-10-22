@@ -49,14 +49,13 @@ namespace FunctionApp1
                     connection.AccessToken = token;
                     using (var model = new BruceDbContext(connection))
                     {
-                        var users = model.ToDos.ToList();
-                        return new OkObjectResult($"Results:{Environment.NewLine}{JsonConvert.SerializeObject(users)}");
+                        var todos = model.ToDos.ToList();
+                        return new OkObjectResult(todos);
                     }
                 }
-
                 catch (Exception ex)
                 {
-                    return new ObjectResult(ex) { StatusCode = 500 };
+                    return new ObjectResult(ex.InnerException.Message.ToString()) { StatusCode = 500 };
                 }
             }
         }
