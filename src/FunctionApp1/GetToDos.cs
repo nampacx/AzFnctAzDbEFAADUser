@@ -21,40 +21,38 @@ using System.Configuration;
 
 namespace FunctionApp1
 {
-    public class Function1
+    public class GetToDos
     {
-        private readonly ILogger<Function1> _logger;
+        private readonly ILogger<GetToDos> _logger;
 
-        public Function1(ILogger<Function1> log)
+        public GetToDos(ILogger<GetToDos> log)
         {
             _logger = log;
         }
 
-        [FunctionName("Function1")]
+        [FunctionName(nameof(GetToDos))]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Description = "The OK response")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req)
         {
-            var token = req.Headers["Authorization"].FirstOrDefault();
-            token = token.Split(" ", StringSplitOptions.RemoveEmptyEntries).Last();
-            
-            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
-            builder.DataSource = Environment.GetEnvironmentVariable("SqlServerName");
-            builder.InitialCatalog = Environment.GetEnvironmentVariable("SqlDbName");
-
-            using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+            _logger.LogInformation($"Called: {nameof(GetToDos)}.{nameof(Run)}");
+            var connectionString = Environment.GetEnvironmentVariable("SqlConnectionString");
+            _logger.LogInformation($"ConnectionString: {connectionString}");
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 try
                 {
-                    connection.AccessToken = token;
-                    using (var model = new BruceDbContext(connection))
+                    using (var model = new ToDoContext(connection))
                     {
                         var todos = model.ToDos.ToList();
+
+
                         return new OkObjectResult(todos);
                     }
                 }
                 catch (Exception ex)
                 {
+                    _logger.LogError($"Error: {ex}");
                     return new ObjectResult(ex.InnerException.Message.ToString()) { StatusCode = 500 };
                 }
             }
@@ -62,11 +60,11 @@ namespace FunctionApp1
     }
 
 
-    public class BruceDbContext : DbContext
+    public class ToDoContext : DbContext
     {
-        public BruceDbContext(SqlConnection con) : base(con, true)
+        public ToDoContext(SqlConnection con) : base(con, true)
         {
-            Database.SetInitializer<BruceDbContext>(null);
+            Database.SetInitializer<ToDoContext>(null);
         }
 
         public virtual DbSet<ToDo> ToDos { get; set; }
