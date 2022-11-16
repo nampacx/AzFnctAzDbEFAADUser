@@ -4,6 +4,11 @@
 		<AzureFunctionsVersion>v4</AzureFunctionsVersion>
 	</PropertyGroup>
 	<ItemGroup>
+		<PackageReference Include="Extensions.Microsoft.Logging.ApplicationInsights" Version="6.0.11" />
+		<PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.15.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.ApplicationInsights" Version="2.21.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.0" />
 

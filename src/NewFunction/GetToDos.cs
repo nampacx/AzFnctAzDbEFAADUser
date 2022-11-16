@@ -13,19 +13,18 @@ namespace NewFunction
 {
     public class GetToDos
     {
-        private readonly ILogger<GetToDos> logger;
+
         private readonly ToDoContext context;
 
-        public GetToDos(ILogger<GetToDos> logger, ToDoContext context)
+        public GetToDos( ToDoContext context)
         {
-            this.logger = logger;
             this.context = context;
         }
 
         [FunctionName("GetToDos")]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
-            ILogger log)
+            ILogger logger)
         {
             logger.LogInformation($"Called: {nameof(GetToDos)}.{nameof(Run)}");
             try
